@@ -7,5 +7,4 @@
 
 # Security credentials file #
 
-**/AwsCredentials.properties
-src/AwsCredentials.properties
+*.properties
