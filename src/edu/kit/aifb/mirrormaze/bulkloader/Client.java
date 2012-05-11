@@ -12,6 +12,8 @@ import com.amazonaws.services.ec2.model.DescribeImagesRequest;
 import com.amazonaws.services.ec2.model.DescribeImagesResult;
 import com.amazonaws.services.ec2.model.Image;
 
+import edu.kit.aifb.mirrormaze.bulkloader.db.entity.AmiEntity;
+
 /**
  * 
  * Collect AMI meta-data via EC2 service requests.
@@ -119,15 +121,14 @@ public class Client {
 	}
 
 	private static void run() {
-		
-		if(argRegion.equalsIgnoreCase("all")) {
-			for(Repository repo : Repository.values())
+
+		if (argRegion.equalsIgnoreCase("all")) {
+			for (Repository repo : Repository.values())
 				run(repo.getName());
 		} else {
 			run(argRegion);
 		}
-		
-		
+
 	}
 
 	private static void run(String repository) {
@@ -137,24 +138,10 @@ public class Client {
 		int j = 0;
 		for (Image image : result.getImages()) {
 
-			// Create a model from the AMI meta data.
-			AmiModel ami = new AmiModel(repository, image.getImageId());
-			
-			ami.setRepository(repository);
-			ami.setImageId(image.getImageId());
-			ami.setArchitecture(image.getArchitecture());
-			ami.setDescription(image.getDescription());
-			ami.setImageLocation(image.getImageLocation());
-			ami.setImageOwnerAlias(image.getImageOwnerAlias());
-			ami.setImageType(image.getImageType());
-			ami.setName(image.getName());
-			ami.setOwnerId(image.getOwnerId());
-			ami.setPlatform(image.getPlatform());
-			
-			// Upload record to App Engine database?
-			// Collect ami models and bulk upload?
-			// TODO
-			
+			// Save new AMI entity.
+			// TODO: collect 100 or so AMIs and then bulk upload them.
+			AmiManager.saveAmi(repository, image.getImageId(), image.getImageLocation(), image.getImageOwnerAlias(), image.getOwnerId(), image.getName(), image.getDescription(), image.getArchitecture(), image.getPlatform(), image.getImageType());
+
 			i++;
 			j++;
 			if (i >= 100) {

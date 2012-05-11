@@ -1,29 +1,68 @@
-package edu.kit.aifb.mirrormaze.bulkloader;
+package edu.kit.aifb.mirrormaze.bulkloader.db.entity;
 
-public class AmiModel {
+import javax.jdo.annotations.Extension;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
-	private String key;
+import edu.kit.aifb.mirrormaze.bulkloader.db.model.AmiModel;
+
+@PersistenceCapable( table = "AMI" )
+public class AmiEntity implements AmiModel {
+
+	@Persistent
+    @Extension(vendorName="datanucleus", key="gae.pk-id", value="true")
+    private Long keyId;
+    
+    // attributes
+    @Persistent
 	private String repository;
+    @Persistent
 	private String imageId;
+    @Persistent
 	private String imageLocation;
+    @Persistent
 	private String imageOwnerAlias;
+    @Persistent
 	private String ownerId;
+    @Persistent
 	private String name;
+    @Persistent
 	private String description;
+    @Persistent
 	private String architecture;
+    @Persistent
 	private String platform;
+    @Persistent
 	private String imageType;
-	
-	public AmiModel(String repositoryId, String imageId) {
-		this.key = repositoryId+imageId;
+
+	public AmiEntity(String repository, String imageId,
+			String imageLocation, String imageOwnerAlias, String ownerId,
+			String name, String description, String architecture,
+			String platform, String imageType) {
+//		super();
+		this.repository = repository;
+		this.imageId = imageId;
+		this.imageLocation = imageLocation;
+		this.imageOwnerAlias = imageOwnerAlias;
+		this.ownerId = ownerId;
+		this.name = name;
+		this.description = description;
+		this.architecture = architecture;
+		this.platform = platform;
+		this.imageType = imageType;
 	}
-	
-	public String getKey() {
-		return key;
-	}
-	public void setKey(String repositoryId, String imageId) {
-		this.key = repositoryId+imageId;
-	}
+
+    public Long getKeyId()
+    {
+        return keyId;
+    }
+
+    public void setKeyId( Long keyId )
+    {
+        this.keyId = keyId;
+    }
 	
 	public String getRepository() {
 		return repository;
