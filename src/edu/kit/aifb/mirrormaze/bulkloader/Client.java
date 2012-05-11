@@ -69,7 +69,7 @@ public class Client {
 
 	private static void init() throws Exception {
 		AWSCredentials credentials = new PropertiesCredentials(
-				AmazonEC2Client.class
+				edu.kit.aifb.mirrormaze.bulkloader.Client.class
 						.getResourceAsStream("AwsCredentials.properties"));
 
 		ec2 = new AmazonEC2Client(credentials);
@@ -80,39 +80,37 @@ public class Client {
 		init();
 
 		// Parse the command line arguments.
-		int argindex = 0;
+		if (args.length > 0) {
+			int argindex = 0;
 
-		if (args.length == 0) {
-			displayHelpMessage();
-			System.exit(0);
-		}
-		while (args[argindex].startsWith("-")) {
-			if (args[argindex].compareTo("-help") == 0) {
-				displayHelpMessage();
-				System.exit(0);
-			} else if (args[argindex].compareTo("-region") == 0) {
-				argindex++;
-				if (argindex >= args.length) {
+			while (args[argindex].startsWith("-")) {
+				if (args[argindex].compareTo("-help") == 0) {
+					displayHelpMessage();
+					System.exit(0);
+				} else if (args[argindex].compareTo("-region") == 0) {
+					argindex++;
+					if (argindex >= args.length) {
+						displayHelpMessage();
+						System.exit(0);
+					}
+					// Select the region (endpoints).
+					argRegion = args[argindex];
+					argindex++;
+				} else {
+					System.out.println("Unknown option " + args[argindex]);
 					displayHelpMessage();
 					System.exit(0);
 				}
-				// Select the region (endpoints).
-				argRegion = args[argindex];
-				argindex++;
-			} else {
-				System.out.println("Unknown option " + args[argindex]);
+
+				if (argindex >= args.length) {
+					break;
+				}
+			}
+
+			if (argindex != args.length) {
 				displayHelpMessage();
 				System.exit(0);
 			}
-
-			if (argindex >= args.length) {
-				break;
-			}
-		}
-
-		if (argindex != args.length) {
-			displayHelpMessage();
-			System.exit(0);
 		}
 
 		// Now, run the crawler client with the arguments that have been passed
@@ -122,7 +120,11 @@ public class Client {
 
 	private static void run() {
 
-		if (argRegion.equalsIgnoreCase("all")) {
+		if (argRegion == null || argRegion.isEmpty()) {
+			// Run in default region
+			argRegion = CommandLineArg.REGION_DEFAULT.getName();
+			run(argRegion);
+		} else if (argRegion.equalsIgnoreCase("all")) {
 			for (Repository repo : Repository.values())
 				run(repo.getName());
 		} else {
@@ -132,6 +134,7 @@ public class Client {
 	}
 
 	private static void run(String repository) {
+		System.out.println("Get virtual machine image info from repository "+repository);
 		DescribeImagesRequest describeImagesRequest = new DescribeImagesRequest();
 		DescribeImagesResult result = ec2.describeImages(describeImagesRequest);
 		int i = 0;
@@ -140,13 +143,18 @@ public class Client {
 
 			// Save new AMI entity.
 			// TODO: collect 100 or so AMIs and then bulk upload them.
-			AmiManager.saveAmi(repository, image.getImageId(), image.getImageLocation(), image.getImageOwnerAlias(), image.getOwnerId(), image.getName(), image.getDescription(), image.getArchitecture(), image.getPlatform(), image.getImageType());
+			AmiManager.saveAmi(repository, image.getImageId(),
+					image.getImageLocation(), image.getImageOwnerAlias(),
+					image.getOwnerId(), image.getName(),
+					image.getDescription(), image.getArchitecture(),
+					image.getPlatform(), image.getImageType());
 
 			i++;
 			j++;
 			if (i >= 100) {
-				i=0;
+				i = 0;
 				System.out.println("recordcount: " + j);
+				// break;
 			}
 		}
 	}
