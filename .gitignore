@@ -6,4 +6,4 @@
 *.ear
 
 # Security credentials file #
-*/AwsCredentials.properties
+AwsCredentials.properties
