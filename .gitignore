@@ -4,3 +4,6 @@
 *.jar
 *.war
 *.ear
+
+# Security credentials file #
+*/AwsCredentials.properties
