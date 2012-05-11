@@ -7,3 +7,8 @@
 
 # Security credentials file #
 AwsCredentials.properties
+
+# Eclipse stuff #
+.project
+.classpath
+bin
