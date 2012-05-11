@@ -1,18 +1,12 @@
 package edu.kit.aifb.mirrormaze.bulkloader;
 
-import java.util.Map;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.PutItemRequest;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.DescribeImagesRequest;
 import com.amazonaws.services.ec2.model.DescribeImagesResult;
 import com.amazonaws.services.ec2.model.Image;
-
-import edu.kit.aifb.mirrormaze.bulkloader.db.entity.AmiEntity;
 
 /**
  * 
@@ -141,14 +135,8 @@ public class Client {
 		int j = 0;
 		for (Image image : result.getImages()) {
 
-			// Save new AMI entity.
+			// Bulk upload data to app engine
 			// TODO: collect 100 or so AMIs and then bulk upload them.
-			boolean success = AmiManager.saveAmi(repository, image.getImageId(),
-					image.getImageLocation(), image.getImageOwnerAlias(),
-					image.getOwnerId(), image.getName(),
-					image.getDescription(), image.getArchitecture(),
-					image.getPlatform(), image.getImageType());
-			System.out.println(success+ ": success saving "+image.getImageId());
 
 			i++;
 			j++;
