@@ -143,11 +143,12 @@ public class Client {
 
 			// Save new AMI entity.
 			// TODO: collect 100 or so AMIs and then bulk upload them.
-			AmiManager.saveAmi(repository, image.getImageId(),
+			boolean success = AmiManager.saveAmi(repository, image.getImageId(),
 					image.getImageLocation(), image.getImageOwnerAlias(),
 					image.getOwnerId(), image.getName(),
 					image.getDescription(), image.getArchitecture(),
 					image.getPlatform(), image.getImageType());
+			System.out.println(success+ ": success saving "+image.getImageId());
 
 			i++;
 			j++;

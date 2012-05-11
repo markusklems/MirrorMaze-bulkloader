@@ -1,47 +1,45 @@
 package edu.kit.aifb.mirrormaze.bulkloader.db.entity;
 
 import javax.jdo.annotations.Extension;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 
 import edu.kit.aifb.mirrormaze.bulkloader.db.model.AmiModel;
 
-@PersistenceCapable( table = "AMI" )
+@PersistenceCapable(table = "AMI")
 public class AmiEntity implements AmiModel {
 
 	@Persistent
-    @Extension(vendorName="datanucleus", key="gae.pk-id", value="true")
-    private Long keyId;
-    
-    // attributes
-    @Persistent
+	@Extension(vendorName = "datanucleus", key = "gae.pk-id", value = "true")
+	private Long keyId;
+
+	// attributes
+	@Persistent
 	private String repository;
-    @Persistent
+	@Persistent
 	private String imageId;
-    @Persistent
+	@Persistent
 	private String imageLocation;
-    @Persistent
+	@Persistent
 	private String imageOwnerAlias;
-    @Persistent
+	@Persistent
 	private String ownerId;
-    @Persistent
+	@Persistent
 	private String name;
-    @Persistent
+	@Persistent
 	private String description;
-    @Persistent
+	@Persistent
 	private String architecture;
-    @Persistent
+	@Persistent
 	private String platform;
-    @Persistent
+	@Persistent
 	private String imageType;
 
-	public AmiEntity(String repository, String imageId,
-			String imageLocation, String imageOwnerAlias, String ownerId,
-			String name, String description, String architecture,
-			String platform, String imageType) {
-//		super();
+	public AmiEntity(String repository, String imageId, String imageLocation,
+			String imageOwnerAlias, String ownerId, String name,
+			String description, String architecture, String platform,
+			String imageType) {
+		// super();
 		this.repository = repository;
 		this.imageId = imageId;
 		this.imageLocation = imageLocation;
@@ -54,16 +52,14 @@ public class AmiEntity implements AmiModel {
 		this.imageType = imageType;
 	}
 
-    public Long getKeyId()
-    {
-        return keyId;
-    }
+	public Long getKeyId() {
+		return keyId;
+	}
 
-    public void setKeyId( Long keyId )
-    {
-        this.keyId = keyId;
-    }
-	
+	public void setKeyId(Long keyId) {
+		this.keyId = keyId;
+	}
+
 	public String getRepository() {
 		return repository;
 	}
@@ -75,56 +71,73 @@ public class AmiEntity implements AmiModel {
 	public String getImageId() {
 		return imageId;
 	}
+
 	public void setImageId(String imageId) {
 		this.imageId = imageId;
 	}
+
 	public String getImageLocation() {
 		return imageLocation;
 	}
+
 	public void setImageLocation(String imageLocation) {
 		this.imageLocation = imageLocation;
 	}
+
 	public String getImageOwnerAlias() {
 		return imageOwnerAlias;
 	}
+
 	public void setImageOwnerAlias(String imageOwnerAlias) {
 		this.imageOwnerAlias = imageOwnerAlias;
 	}
+
 	public String getOwnerId() {
 		return ownerId;
 	}
+
 	public void setOwnerId(String ownerId) {
 		this.ownerId = ownerId;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public String getArchitecture() {
 		return architecture;
 	}
+
 	public void setArchitecture(String architecture) {
 		this.architecture = architecture;
 	}
+
 	public String getPlatform() {
 		return platform;
 	}
+
 	public void setPlatform(String platform) {
 		this.platform = platform;
 	}
+
 	public String getImageType() {
 		return imageType;
 	}
+
 	public void setImageType(String imageType) {
 		this.imageType = imageType;
 	}
-	
+
 }
