@@ -29,20 +29,36 @@ transformers:
   connector_options:
     # TODO: Add connector options here--these are specific to each connector.
   property_map:
-    - property: __key__
-      external_name: key
-      import_transform: transform.key_id_or_name_as_string
+#    - property: __key__
+#      external_name: key
+#      import_transform: transform.key_id_or_name_as_string
 
-    - property: content
-      external_name: content
-      # Type: String Stats: 7 properties of this type in this kind.
+    - property: repository
+      external_name: repository
 
-#    - property: date
-#      external_name: date
-#      # Type: Date/Time Stats: 7 properties of this type in this kind.
-#      import_transform: transform.import_date_time('%Y-%m-%dT%H:%M:%S')
-#      export_transform: transform.export_date_time('%Y-%m-%dT%H:%M:%S')
+    - property: imageId
+      external_name: imageId
+
+    - property: imageLocation
+      external_name: imageLocation
+
+    - property: imageOwnerAlias
+      external_name: imageOwnerAlias      
+
+    - property: ownerId
+      external_name: ownerId
 
     - property: name
       external_name: name
-      # Type: String Stats: 7 properties of this type in this kind.
+
+    - property: description
+      external_name: description
+
+    - property: architecture
+      external_name: architecture            
+
+    - property: platform
+      external_name: platform
+
+    - property: imageType
+      external_name: imageType        
