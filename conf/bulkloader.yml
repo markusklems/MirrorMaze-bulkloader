@@ -23,7 +23,7 @@ python_preamble:
 
 transformers:
 
-- kind: AMI
+- kind: AmiEntity
   connector: csv
 
   connector_options:
