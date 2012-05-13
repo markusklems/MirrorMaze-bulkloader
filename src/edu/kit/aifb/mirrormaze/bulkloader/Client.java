@@ -1,5 +1,9 @@
 package edu.kit.aifb.mirrormaze.bulkloader;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.ec2.AmazonEC2;
@@ -78,10 +82,10 @@ public class Client {
 			int argindex = 0;
 
 			while (args[argindex].startsWith("-")) {
-				if (args[argindex].compareTo("-help") == 0) {
+				if (args[argindex].compareTo("--help") == 0) {
 					displayHelpMessage();
 					System.exit(0);
-				} else if (args[argindex].compareTo("-region") == 0) {
+				} else if (args[argindex].compareTo("--region") == 0) {
 					argindex++;
 					if (argindex >= args.length) {
 						displayHelpMessage();
@@ -112,7 +116,7 @@ public class Client {
 		run();
 	}
 
-	private static void run() {
+	private static void run() throws IOException {
 
 		if (argRegion == null || argRegion.isEmpty()) {
 			// Run in default region
@@ -127,25 +131,75 @@ public class Client {
 
 	}
 
-	private static void run(String repository) {
-		System.out.println("Get virtual machine image info from repository "+repository);
+	private static void run(String repository) throws IOException {
+		System.out.println("Get virtual machine image info from repository "
+				+ repository);
 		DescribeImagesRequest describeImagesRequest = new DescribeImagesRequest();
 		DescribeImagesResult result = ec2.describeImages(describeImagesRequest);
-		int i = 0;
-		int j = 0;
+		System.out.println("Fetched all vm image descriptions from "
+				+ repository);
+
+		StringBuffer csvText = new StringBuffer(csvHeader());
+
 		for (Image image : result.getImages()) {
 
-			// Bulk upload data to app engine
-			// TODO: collect 100 or so AMIs and then bulk upload them.
-
-			i++;
-			j++;
-			if (i >= 100) {
-				i = 0;
-				System.out.println("recordcount: " + j);
-				// break;
-			}
+			csvText.append(csvLine(repository,image));
+			
 		}
+		// Save the csv file to the local file system.
+		final String fileName = "data/ami-list-" + repository
+				+ ".csv";
+		FileWriter csvFileWriter = new FileWriter(fileName);
+		BufferedWriter csvBufferedWriter = new BufferedWriter(
+				csvFileWriter);
+		csvBufferedWriter.write(csvText.toString());
+		csvBufferedWriter.close();
+		System.out.println("Created new file " + fileName);
+		// Reset the csvText StringBuffer.
+		csvText = new StringBuffer(csvHeader());
+	}
+
+
+	private static String csvLine(String repository, Image image) {
+		// Create a text line for each image, where the attributes are
+		// comma-separated.
+		final StringBuffer toReturn = new StringBuffer();
+		toReturn.append(repository);
+		toReturn.append(",");
+		toReturn.append(image.getImageId());
+		toReturn.append(",");
+		toReturn.append(format(image.getImageLocation()));
+		toReturn.append(",");
+		toReturn.append(format(image.getImageOwnerAlias()));
+		toReturn.append(",");
+		toReturn.append(format(image.getOwnerId()));
+		toReturn.append(",");
+		toReturn.append(format(image.getName()));
+		toReturn.append(",");
+		toReturn.append(format(image.getDescription()));
+		toReturn.append(",");
+		toReturn.append(format(image.getArchitecture()));
+		toReturn.append(",");
+		toReturn.append(format(image.getPlatform()));
+		toReturn.append(",");
+		toReturn.append(format(image.getImageType()));
+		toReturn.append("\n");
+		return toReturn.toString();
+	}
+
+	private static Object format(String str) {
+		if(str!=null)
+			return str.replace(",", ".");
+		else
+			return "";
+	}
+
+	private static String csvHeader() {
+		// The attributes in the csv must be ordered like this:
+		StringBuffer csvHeader = new StringBuffer(
+				"repository,imageId,imageLocation,imageOwnerAlias,ownerId,name,description,architecture,platform,imageType");
+		csvHeader.append("\n");
+		return csvHeader.toString();
 	}
 
 	public static void displayHelpMessage() {
