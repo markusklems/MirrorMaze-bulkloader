@@ -13,7 +13,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.annotate.JsonClass;
 
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -51,6 +50,7 @@ public class JsonUploader {
 			AmazonS3 s3 = new AmazonS3Client(new PropertiesCredentials(
 					JsonUploader.class
 							.getResourceAsStream("AwsCredentials.properties")));
+			log.info("Using S3 Account " + s3.getS3AccountOwner());
 			if (!s3.doesBucketExist(S3Bucket)) {
 				log.warning("S3 bucket doesn't exist. Creating.");
 				s3.createBucket(S3Bucket);
@@ -69,6 +69,9 @@ public class JsonUploader {
 						post.setEntity(new InputStreamEntity(jsonFile
 								.getObjectContent(), jsonFile
 								.getObjectMetadata().getContentLength()));
+						String amiId = jsonFile.getKey().split("-")[1] + "-"
+								+ jsonFile.getKey().split("-")[2];
+						post.addHeader("AMI-ID", amiId);
 						HttpResponse response = httpclient.execute(post);
 
 						HttpEntity entity = response.getEntity();
