@@ -4,14 +4,16 @@
 package edu.kit.aifb.mirrormaze.bulkloader;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.protocol.HTTP;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.codehaus.jackson.annotate.JsonClass;
 
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -62,10 +64,15 @@ public class JsonUploader {
 					for (S3ObjectSummary s3JSON : jsonFiles) {
 						S3Object jsonFile = s3.getObject(new GetObjectRequest(
 								S3Bucket, s3JSON.getKey()));
+						DefaultHttpClient httpclient = new DefaultHttpClient();
 						HttpPost post = new HttpPost(URL);
 						post.setEntity(new InputStreamEntity(jsonFile
 								.getObjectContent(), jsonFile
 								.getObjectMetadata().getContentLength()));
+						HttpResponse response = httpclient.execute(post);
+
+						HttpEntity entity = response.getEntity();
+						EntityUtils.consume(entity);
 						log.info("Sent file " + jsonFile.getKey() + " to "
 								+ URL);
 					}
@@ -73,6 +80,8 @@ public class JsonUploader {
 				} catch (Exception e) {
 					log.severe("Couldn't read files from s3 bucket " + S3Bucket
 							+ "!");
+					log.throwing(JsonUploader.class.getName(), "main", e);
+					e.printStackTrace();
 				}
 
 			}
